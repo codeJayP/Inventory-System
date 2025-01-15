@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        .form {
+            max-width: 500px;
+            margin: 50px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="form">
+        <!-- Display form-wide errors -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="{{ reg_form.username.id_for_label }}">{{ reg_form.username.label }}</label>
+                {{ reg_form.username }}
+                {% for error in reg_form.username.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ reg_form.first_name.id_for_label }}">{{ reg_form.first_name.label }}</label>
+                {{ reg_form.first_name }}
+                {% for error in reg_form.first_name.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ reg_form.last_name.id_for_label }}">{{ reg_form.last_name.label }}</label>
+                {{ reg_form.last_name }}
+                {% for error in reg_form.last_name.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ reg_form.office.id_for_label }}">{{ reg_form.office.label }}</label>
+                {{ reg_form.office }}
+                {% for error in reg_form.office.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ reg_form.password1.id_for_label }}">{{ reg_form.password1.label }}</label>
+                {{ reg_form.password1 }}
+                {% for error in reg_form.password1.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ reg_form.password2.id_for_label }}">{{ reg_form.password2.label }}</label>
+                {{ reg_form.password2 }}
+                {% for error in reg_form.password2.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="form-control btn-success">Register</button>
+        </form>
+    </div>
+</body>
+</html>
