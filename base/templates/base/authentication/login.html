@@ -24,22 +24,16 @@
   <body class="login-page bg-body-secondary">
     <div class="login-box">
       <div class="card card-outline card-primary">
-        <div class="card-header">
-          <a
-            href="../index2.html"
-            class="link-dark text-center link-offset-2 link-opacity-100 link-opacity-50-hover"
-          >
-            <h1 class="mb-0"><b>Admin</b>LTE</h1>
-          </a>
+        <div class="card-header text-center">
+            <h1>Login</h1>
         </div>
         <div class="card-body login-card-body">
-          <p class="login-box-msg">Sign in to start your session</p>
           <form method="post">
             {% csrf_token %}
             <div class="input-group mb-1">
               <div class="form-floating">
                 <input id="loginEmail" type="text" class="form-control" name="username" value="" placeholder="" />
-                <label for="loginEmail">Email</label>
+                <label for="loginEmail">Username</label>
               </div>
               <div class="input-group-text"><span class="bi bi-envelope"></span></div>
             </div>
@@ -78,10 +72,10 @@
             </a>
           </div> -->
           <!-- /.social-auth-links -->
-          <p class="mb-1"><a href="forgot-password.html">I forgot my password</a></p>
+          <!-- <p class="mb-1"><a href="forgot-password.html">I forgot my password</a></p>
           <p class="mb-0">
             <a href="{% url 'user_register' %}" class="text-center"> Register a new membership </a>
-          </p>
+          </p> -->
         </div>
         <!-- /.login-card-body -->
       </div>

@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from .decorators import *
 
 @login_required(login_url="user_login")
+@admin_only
 def home(request):
     user_list = User.objects.all()
 
@@ -31,7 +32,7 @@ def user_login(request):
             else:
                 messages(request, 'Password Incorrect')
 
-    return render(request, 'login.html')
+    return render(request, 'base/authentication/login.html')
 
 def user_logout(request):
     logout(request)
@@ -52,4 +53,4 @@ def user_register(request):
     context = {
         'reg_form': reg_form
     }
-    return render(request, 'register.html', context)
+    return render(request, 'base/authentication/register.html', context)
