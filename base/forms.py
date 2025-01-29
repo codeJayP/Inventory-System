@@ -18,11 +18,15 @@ class RegForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({'class':'form-control'})
-        self.fields['first_name'].widget.attrs.update({'class':'form-control'})
-        self.fields['last_name'].widget.attrs.update({'class':'form-control'})
-        self.fields['password1'].widget.attrs.update({'class':'form-control'})
-        self.fields['password2'].widget.attrs.update({'class':'form-control'})
+        registered_offices = UserProfile.objects.values_list('office', flat=True)
+        available_offices = [choice for choice in self.OFFICE_CHOICES if choice[0] not in registered_offices]
+        self.fields['office'].choices = available_offices
+
+        self.fields['username'].widget.attrs.update({'class':'form-control', 'placeholder':'Username'})
+        self.fields['first_name'].widget.attrs.update({'class':'form-control', 'placeholder':'First Name'})
+        self.fields['last_name'].widget.attrs.update({'class':'form-control', 'placeholder':'Last Name'})
+        self.fields['password1'].widget.attrs.update({'class':'form-control', 'placeholder':'Password'})
+        self.fields['password2'].widget.attrs.update({'class':'form-control', 'placeholder':'Re-type Password'})
         self.fields['office'].widget.attrs.update({'class':'form-select'})
 
     def clean_office(self):

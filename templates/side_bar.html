@@ -24,13 +24,28 @@
       <nav class="mt-2">
         <!--begin::Sidebar Menu-->
         <ul
-          class="nav sidebar-menu flex-column"
+          class="nav sidebar-menu flex-column nav-sidebar"
           data-lte-toggle="treeview"
           role="menu"
           data-accordion="false"
         >
+        {% if request.user.is_staff %}
+        <li class="nav-item">
+          <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+              <i class="nav-icon bi bi-speedometer"></i>
+              <p>Dashboard</p>
+          </a>
+      </li>
+      <li class="nav-item">
+          <a href="{% url 'item_list' %}" class="nav-link {% if request.resolver_match.url_name == 'item_list' %}active{% endif %}">
+              <i class="nav-icon bi bi-speedometer"></i>
+              <p>Item List</p>
+          </a>
+      </li>
+      
+          {% else %}
           <li class="nav-item">
-            <a href="{% url 'home' %}" class="nav-link active">
+            <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %} active {% endif %}">
                 <i class="nav-icon bi bi-speedometer"></i>
                 <p>
                   Dashboard
@@ -38,13 +53,14 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'home' %}" class="nav-link">
+            <a href="{% url 'item_list' %}" class="nav-link {% if request.resolver_match.url_name == 'item_list' %} active {% endif %}">
                 <i class="nav-icon bi bi-speedometer"></i>
                 <p>
                   Item List
                 </p>
             </a>
           </li>
+          {% endif %}
           <!-- <li class="nav-item menu-open">
             <a href="#" class="nav-link">
               <i class="nav-icon bi bi-speedometer"></i>

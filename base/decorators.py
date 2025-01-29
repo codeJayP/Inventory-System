@@ -19,7 +19,7 @@ def allowed_users(allowed_roles=[]):
             if group in allowed_roles:
                 return view_func(request, *args, **kwargs)
             else:
-                return redirect('index')
+                return redirect('home')
         return wrapper_func
     return decorator
 
@@ -30,7 +30,7 @@ def admin_only(view_func):
             group = request.user.groups.all()[0].name
         
         if group == 'employee':
-            return redirect('employee')
+            return redirect('employee_page')
         
         if group == 'admin':
             return view_func(request, *args, **kwargs)

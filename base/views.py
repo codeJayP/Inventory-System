@@ -8,10 +8,17 @@ from .decorators import *
 
 @login_required(login_url="user_login")
 @admin_only
-def home(request):
+def admin_page(request):
     user_list = User.objects.all()
 
-    return render(request, 'base/home.html', {'user_list':user_list})
+    return render(request, 'base/admin/home.html', {'user_list':user_list})
+
+@allowed_users(allowed_roles="employee")
+def employee_page(request):
+    return render(request, 'base/employee/home.html')
+
+def item_list(request):
+    return render(request, 'base/items.html')
 
 @unauthorized_user
 def user_login(request):
@@ -28,9 +35,9 @@ def user_login(request):
             return redirect('home')
         else:
             if user is None:
-                messages(request, 'Username not exist')
+                messages.error(request, 'Username not exist')
             else:
-                messages(request, 'Password Incorrect')
+                messages.error(request, 'Password Incorrect')
 
     return render(request, 'base/authentication/login.html')
 

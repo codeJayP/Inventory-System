@@ -3,11 +3,9 @@
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AdminLTE 4 | Login Page v2</title>
+    <title>Login</title>
     <!--begin::Primary Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="title" content="AdminLTE 4 | Login Page v2" />
-    <meta name="author" content="ColorlibHQ" />
     <meta
       name="description"
       content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS."
@@ -28,20 +26,21 @@
             <h1>Login</h1>
         </div>
         <div class="card-body login-card-body">
+          {% if messages %}
+          {% for message in messages %}
+          <div class="text-danger">
+            {{message}}
+          </div>
+          {% endfor %}
+          {% endif %}
           <form method="post">
             {% csrf_token %}
-            <div class="input-group mb-1">
-              <div class="form-floating">
-                <input id="loginEmail" type="text" class="form-control" name="username" value="" placeholder="" />
-                <label for="loginEmail">Username</label>
-              </div>
+            <div class="input-group mb-3">
+                <input id="loginEmail" type="text" class="form-control" name="username" value="" placeholder="Username" />
               <div class="input-group-text"><span class="bi bi-envelope"></span></div>
             </div>
-            <div class="input-group mb-1">
-              <div class="form-floating">
-                <input id="loginPassword" type="password" name="password" class="form-control" placeholder="" />
-                <label for="loginPassword">Password</label>
-              </div>
+            <div class="input-group mb-3">
+                <input id="loginPassword" type="password" name="password" class="form-control" placeholder="Password" />
               <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
             </div>
             <!--begin::Row-->
@@ -72,10 +71,10 @@
             </a>
           </div> -->
           <!-- /.social-auth-links -->
-          <!-- <p class="mb-1"><a href="forgot-password.html">I forgot my password</a></p>
+          <!-- <p class="mb-1"><a href="forgot-password.html">I forgot my password</a></p> -->
           <p class="mb-0">
-            <a href="{% url 'user_register' %}" class="text-center"> Register a new membership </a>
-          </p> -->
+            <a href="{% url 'user_register' %}" class="text-center"> Register </a>
+          </p>
         </div>
         <!-- /.login-card-body -->
       </div>
