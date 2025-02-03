@@ -1,6 +1,296 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
 {% block title %}
 Items List
 {% endblock title %}
+{% block row-title %}
+Items List
+{% endblock row-title %}
+{% block ol %}
+<ol class="breadcrumb float-sm-end">
+    <li class="breadcrumb-item">
+        <!-- Add Item Button -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+            Add
+        </button>
+        <!-- Add Modal -->
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">Add New Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addForm" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <input type="number" class="form-control" id="add-property_num" name="property_num" placeholder="Property Number">
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="add-article_item" name="article_item" placeholder="Article Item">
+                            </div>
+                            <div class="mb-3">
+                                <textarea type="text" class="form-control" id="add-description" name="description" placeholder="Description"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="add-person_accountable" name="person_accountable" placeholder="Person Accountable">
+                            </div>
+                            <div class="mb-3">
+                                <input type="number" class="form-control" id="add-cost" name="cost" placeholder="Cost">
+                            </div>
+                            <div class="mb-3">
+                                <textarea type="text" class="form-control" id="add-remarks" name="remarks" placeholder="Remarks"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Add Item</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </li>
+    
+    <!-- <li class="breadcrumb-item active" aria-current="page">Dashboard</li> -->
+</ol>
+{% endblock ol %}
 {% block content %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Property Number</th>
+            <th>Article Item</th>
+            <th>Description</th>
+            <th>Person Accountable</th>
+            <th>Cost</th>
+            <th>Remarks</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td> {{item.property_num}} </td>
+            <td> {{item.article_item|upper}} </td>
+            <td> {{item.description|capitalize_sentences}} </td>
+            <td> {{item.person_accountable|upper}} </td>
+            <td> {{item.cost}} </td>
+            <td> {{item.remarks}} </td>
+            <td> {{item.time_stamp|timesince}} </td>
+            <td>
+                <!-- Edit Button with Data Attributes -->
+                <button type="button" class="btn btn-warning edit-btn"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#editModal"
+                    data-id="{{ item.id }}"
+                    data-property_num="{{ item.property_num }}"
+                    data-article_item="{{ item.article_item }}"
+                    data-description="{{ item.description }}"
+                    data-person_accountable="{{ item.person_accountable }}"
+                    data-cost="{{ item.cost }}"
+                    data-remarks="{{ item.remarks }}">
+                    Edit
+                </button>
+            </td>
+            <!-- Edit Modal -->
+            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Edit Item</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editForm" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" id="edit-id">
+                                <div class="mb-3">
+                                    <label for="edit-property_num" class="form-label">Property Number</label>
+                                    <input type="number" class="form-control" id="edit-property_num" name="property_num">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-article_item" class="form-label">Article Item</label>
+                                    <input type="text" class="form-control" id="edit-article_item" name="article_item">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-description" class="form-label">Description</label>
+                                    <textarea type="text" class="form-control" id="edit-description" name="description"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-person_accountable" class="form-label">Person Accountable</label>
+                                    <input type="text" class="form-control" id="edit-person_accountable" name="person_accountable">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-cost" class="form-label">Cost</label>
+                                    <input type="number" class="form-control" id="edit-cost" name="cost">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-remarks" class="form-label">Remarks</label>
+                                    <textarea type="text" class="form-control" id="edit-remarks" name="remarks"></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const editModal = document.getElementById("editModal");
+        const editForm = document.getElementById("editForm");
+
+        document.querySelectorAll(".edit-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                document.getElementById("edit-id").value = this.dataset.id;
+                document.getElementById("edit-property_num").value = this.dataset.property_num;
+                document.getElementById("edit-article_item").value = this.dataset.article_item;
+                document.getElementById("edit-description").value = this.dataset.description;
+                document.getElementById("edit-person_accountable").value = this.dataset.person_accountable;
+                document.getElementById("edit-cost").value = this.dataset.cost;
+                document.getElementById("edit-remarks").value = this.dataset.remarks;
+                
+                // Change form action dynamically
+                editForm.action = `/edit_item/${this.dataset.id}/`;
+            });
+        });
+    });
+</script>
+<script>
+    document.getElementById("editForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent form from submitting normally
+
+        let formData = new FormData(this);
+        let url = this.action;
+
+        fetch(url, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Item updated successfully!");
+                location.reload(); // Reload the page to reflect changes
+            } else {
+                alert("Failed to update item.");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+</script>
+
+<script>
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+    function updateTimeAgo() {
+        document.querySelectorAll(".time-ago").forEach(element => {
+            let timestamp = element.dataset.timestamp;
+            let time = new Date(timestamp + "Z");  // Ensure UTC time by adding 'Z'
+            element.innerText = timeSince(time) + " ago";
+        });
+    }
+
+    function timeSince(date) {
+        let seconds = Math.floor((new Date() - date) / 1000);
+        let interval = Math.floor(seconds / 60);
+        if (interval < 1) return "Just now";
+        if (interval < 60) return interval + " minutes";
+        interval = Math.floor(interval / 60);
+        if (interval < 24) return interval + " hours";
+        interval = Math.floor(interval / 24);
+        return interval + " days";
+    }
+
+    // Update every minute
+    setInterval(updateTimeAgo, 60000);
+
+    document.getElementById("addForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent normal form submission
+
+    let formData = new FormData(this);
+
+    fetch("{% url 'add_item' %}", { // Use your Django URL for adding items
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCSRFToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Item added successfully!");
+            
+            // Close the modal correctly
+            let modalElement = document.getElementById("addModal");
+            let modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+
+            // Create new row with correct Bootstrap styling
+            let newRow = `
+                <tr>
+                    <td>${data.property_num}</td>
+                    <td>${data.article_item}</td>
+                    <td>${data.description}</td>
+                    <td>${data.person_accountable}</td>
+                    <td>${data.cost}</td>
+                    <td>${data.remarks}</td>
+                    <td class="time-ago" data-timestamp="${data.time_stamp}">${timeSince(new Date(data.time_stamp))} ago</td>
+                    <td>
+                        <button type="button" class="btn btn-warning edit-btn"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editModal"
+                            data-id="${data.id}"
+                            data-property_num="${data.property_num}"
+                            data-article_item="${data.article_item}"
+                            data-description="${data.description}"
+                            data-person_accountable="${data.person_accountable}"
+                            data-cost="${data.cost}"
+                            data-remarks="${data.remarks}">
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            // **Prepend the new row to the top**
+            document.querySelector("tbody").insertAdjacentHTML("afterbegin", newRow);
+
+            // Reset form
+            document.getElementById("addForm").reset();
+
+            // Update "time since" display
+            updateTimeAgo();
+
+        } else {
+            alert("Failed to add item.");
+        }
+    })
+    .catch(error => console.error("Error:", error));
+});
+
+
+
+</script>
+
+
 {% endblock content %}

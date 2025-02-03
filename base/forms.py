@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
-from .models import UserProfile
+from .models import UserProfile, Equipment
 
 class RegForm(UserCreationForm):
     OFFICE_CHOICES = [
@@ -45,3 +45,17 @@ class RegForm(UserCreationForm):
         user.groups.add(employee_group)
 
         return user
+    
+class ItemForm(forms.ModelForm):
+    class Meta:
+        model = Equipment
+        fields = ['property_num', 'article_item', 'description', 'person_accountable', 'cost', 'remarks']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['property_num'].widget.attrs.update({'class':'form-control', 'placeholder': 'Property NUmber'})
+        self.fields['article_item'].widget.attrs.update({'class':'form-control', 'placeholder': 'Article Item'})
+        self.fields['description'].widget.attrs.update({'class':'form-control', 'placeholder': 'Description'})
+        self.fields['person_accountable'].widget.attrs.update({'class':'form-control', 'placeholder': 'Person Accountable'})
+        self.fields['cost'].widget.attrs.update({'class':'form-control', 'placeholder': 'Cost'})
+        self.fields['remarks'].widget.attrs.update({'class':'form-control', 'placeholder': 'Remarks'})

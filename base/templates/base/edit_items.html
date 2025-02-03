@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Items List
+{% endblock title %}
+{% block ol %}
+<!-- <ol class="breadcrumb float-sm-end">
+    <li class="breadcrumb-item"><a href="{% url 'add_item' %}" class="btn btn-primary">Add</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+</ol> -->
+{% endblock ol %}
+{% block content %}
+<div class="card card-primary card-outline mb-4">
+    <!--begin::Header-->
+    <div class="card-header"><div class="card-title">Quick Example</div></div>
+    <!--end::Header-->
+    <!--begin::Form-->
+    <form>
+        {% csrf_token %}
+        <!--begin::Body-->
+        <div class="card-body">
+          <div class="mb-3">
+            <!-- <label for="propertyNum" class="form-label">{{form.property_num.label}}</label> -->
+            {{edit_form.property_num}}
+          </div>
+          <div class="mb-3">
+            {{edit_form.article_item}}
+          </div>
+          <div class="mb-3">
+            {{edit_form.description}}
+          </div>
+          <div class="mb-3">
+            {{edit_form.person_accountable}}
+          </div>
+          <div class="mb-3">
+            {{edit_form.cost}}
+          </div>
+          <div class="mb-3">
+            {{edit_form.remarks}}
+          </div>
+        </div>
+        <!--end::Body-->
+        <!--begin::Footer-->
+        <div class="card-footer">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        <!--end::Footer-->
+    </form>
+    <!--end::Form-->
+  </div>
+{% endblock content %}
