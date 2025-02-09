@@ -1,18 +1,5 @@
 <!--begin::Script-->
 {% load static %}
-<script>
-  $(document).ready(function () {
-    var currentPath = window.location.pathname;
-
-    $(".nav-sidebar a").each(function () {
-      var linkPath = $(this).attr("href");
-      if (currentPath === linkPath) {
-        $(this).addClass("active");
-        $(this).parents("li.nav-item").addClass("menu-open");
-      }
-    });
-  });
-</script>
 <!--begin::Third Party Plugin(OverlayScrollbars)-->
 <script
   src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js"

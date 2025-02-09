@@ -12,13 +12,15 @@ import io
 from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, landscape, A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
 from django.utils.timesince import timesince
 from datetime import datetime
 from reportlab.lib.units import inch
 from reportlab.lib.colors import blue, gray, whitesmoke,white,black,skyblue
+from reportlab.platypus import Table, TableStyle
+
 # PDF
 def equipment_pdf(request, pk):
     # Get the specific Equipment item
@@ -70,222 +72,287 @@ def equipment_pdf(request, pk):
 
     return response 
 
-def generate_repair_request_pdf(request):
+def generate_repair_request_pdf(request, pk):
+    # brglogo = 'static/dist/img/LOGO.png'
+    # doh = 'static/dist/img/DOH.png'
+    # mapagpadaba = 'static/dist/img/Q.png'
 
-
-
-        
-
-       
+    equipment = Equipment.objects.filter(uuid=pk)
+    for e in equipment:
+        property_num = str(e.property_num)
+        article_item = str(e.article_item)
+    
+    LONG_BOND = (8.5 * inch, 13 * inch)
     buf = io.BytesIO()
-    c = canvas.Canvas(buf)
+    c = canvas.Canvas(buf, pagesize=landscape(LONG_BOND))
     response = HttpResponse(content_type='application/pdf')
     c.setTitle("SERVICE REQUEST")
-    c.setPageSize((8.27*inch, 11.69*inch))
-#Header
 
-    c.setFont("Times-Bold", 15, leading=None)
-    c.setFillColor("green")
-    c.drawString(2.4*inch, 11.34*inch, "Bicol Region General Hospital and Geriatric Medical Center")
-    c.setFont("Times-Roman", 11, leading=None)
-    c.setFillColor("black")
-    c.drawString(3.8*inch, 11.14*inch, "San Pedro, Cabusao Camarines Sur")
-    c.drawString(3*inch, 10.99*inch, "Telephone Nos.: (054) 473-2244, 472-4422, 881-1033, 881-1761")
-    c.drawString(3.1*inch, 10.85*inch, "E-mail Address:")
-    c.setFillColor("Blue")
-    c.drawString(4.2*inch, 10.85*inch, "bicolsan@gmail.com, brghgmc@gmail.com")
-    c.drawString(4.1*inch, 10.66*inch, "Website: brghgmc.doh.gov.ph")
-    c.setStrokeColorRGB(0, 0, 1, alpha=0.4)  # Blue color
-    c.setLineWidth(2)
-    c.line(0*inch,10.55*inch,9*inch,10.55*inch)
+    # Get page width
+    page_width, page_height = landscape(LONG_BOND)
+
+    # Header text
+    header_texts = [
+        "MO-ICT SECTION",
+        "LIST OF PPEs FOUND AT STATION",
+        "for C/Y 2024"
+    ]
+
+    # Header Y positions
+    y_positions = [7.5*inch, 7.3*inch, 7.1*inch] 
+
+    c.setFont("Times-Bold", 12)
+    c.setFillColor(black)
+
+    # Draw each header text centered
+    for text, y in zip(header_texts, y_positions):
+        text_width = c.stringWidth(text, "Times-Bold", 12)
+        x_position = (page_width - text_width) / 2  # Center align
+        c.drawString(x_position, y, text)
+
+    # Draw horizontal line for header (full width)
+    line_y = 6.9 * inch
+    c.line(0.5 * inch, line_y, page_width - 0.5 * inch, line_y)
+    # c.setFont("Times-Roman", 11, leading=None)
+    # c.setFillColor("black")
+    # c.drawString(3.8*inch, 11.14*inch, "San Pedro, Cabusao Camarines Sur")
+    # c.drawString(3*inch, 10.99*inch, "Telephone Nos.: (054) 473-2244, 472-4422, 881-1033, 881-1761")
+    # c.drawString(3.1*inch, 10.85*inch, "E-mail Address:")
+    # c.setFillColor("Blue")
+    # c.drawString(4.2*inch, 10.85*inch, "bicolsan@gmail.com, brghgmc@gmail.com")
+    # c.drawString(4.1*inch, 10.66*inch, "Website: brghgmc.doh.gov.ph")
+    # c.setStrokeColorRGB(0, 0, 1, alpha=0.4) 
+    # c.setLineWidth(2)
+    # c.line(0*inch,10.55*inch,9*inch,10.55*inch)
+
+# Header
+    # c.drawImage(brglogo, 1.20*inch, 10.69*inch, mask='auto', width=70, height=70)
+    # c.drawImage(doh, 0.12*inch, 10.69*inch, mask='auto', width=70, height=70)
 
 #Body
-    c.setFillColor("black")
-    c.setFont("Times-Bold", 12, leading=None)
-    c.drawString(3*inch, 10*inch, "IMIS SERVICE REQUEST FORM")
+    # c.setFillColor("black")
+    # c.setFont("Times-Bold", 12, leading=None)
+    # c.drawString(3*inch, 10*inch, "IMIS SERVICE REQUEST FORM")
     
-    c.setFillColor("black")
-    c.setFont("Times-Roman", 10, leading=None)
-    c.drawString(0.9*inch, 9.5*inch, "From: _________________________________________" )
-    c.drawString(1.5*inch, 9.52*inch, "office" )
-    c.drawString(4.46*inch, 9.5*inch, "Date: _______________________________" )
-    c.drawString(5.3*inch, 9.52*inch, "date" )
-    c.drawString(0.5*inch, 9*inch, "Kind of Work:" )
-    c.drawString(0.7*inch, 8.75*inch, "_______________________________________" )
-    c.drawString(1.7*inch, 8.75*inch, "kind_of_work" )
-    c.drawString(1.3*inch, 8.80*inch, "Repair" )
-    c.drawString(1.3*inch, 8.60*inch, "Layout Design" )
-    c.drawString(1.3*inch, 8.40*inch, "Equipment Setup" )
-    c.drawString(1.3*inch, 8.20*inch, "Data Entry" )
-    c.drawString(1.3*inch, 8*inch, "Software Development" )
-    c.drawString(3.2*inch, 8.80*inch, "Replacement" )
-    c.drawString(3.2*inch, 8.60*inch, "Installation" )
-    c.drawString(3.2*inch, 8.40*inch, "Technical Assistance" )
-    c.drawString(3.2*inch, 8.20*inch, "Others" )
+    # c.setFillColor("black")
+    # c.setFont("Times-Roman", 10, leading=None)
+    # c.drawString(0.9*inch, 9.5*inch, "From: _________________________________________" )
+    # c.drawString(1.5*inch, 9.52*inch, property_num )
+    # c.drawString(4.46*inch, 9.5*inch, "Date: _______________________________" )
+    # c.drawString(5.3*inch, 9.52*inch, "date" )
+    # c.drawString(0.5*inch, 9*inch, "Kind of Work:" )
+    # c.drawString(0.7*inch, 8.75*inch, "_______________________________________" )
+    # c.drawString(1.7*inch, 8.75*inch, article_item )
+    # c.drawString(1.3*inch, 8.80*inch, property_num )
+    # c.drawString(1.3*inch, 8.60*inch, "Layout Design" )
+    # c.drawString(1.3*inch, 8.40*inch, "Equipment Setup" )
+    # c.drawString(1.3*inch, 8.20*inch, "Data Entry" )
+    # c.drawString(1.3*inch, 8*inch, "Software Development" )
+    # c.drawString(3.2*inch, 8.80*inch, "Replacement" )
+    # c.drawString(3.2*inch, 8.60*inch, "Installation" )
+    # c.drawString(3.2*inch, 8.40*inch, "Technical Assistance" )
+    # c.drawString(3.2*inch, 8.20*inch, "Others" )
 
-    c.drawString(4.5*inch, 9*inch, "Nature of Work and Site of Request:" )
-    text_object = c.beginText(4.7*inch, 8.77*inch) 
-    text_object.setFont("Times-Roman", 9)
+    # c.drawString(4.5*inch, 9*inch, "Nature of Work and Site of Request:" )
+    # text_object = c.beginText(4.7*inch, 8.77*inch) 
+    # text_object.setFont("Times-Roman", 9)
    
         
-    c.drawText(text_object)
-    c.drawString(4.65*inch, 8.75*inch, "_______________________________________" )
-    c.drawString(4.65*inch, 8.60*inch, "_______________________________________" )
-    c.drawString(4.65*inch, 8.4832*inch, "_______________________________________" )
-    c.drawString(0.5*inch, 7.5*inch, "Requested by: ________________________________" )
-    c.drawString(1.8*inch, 7.5*inch, "first_name" )
-    c.drawString(2.19*inch, 7.5*inch, "last_name" )
-    c.drawString(4*inch, 7.5*inch, "Received by: _________________________________" )
-    c.drawString(5*inch, 7.5*inch, "staff_fullname" )
+    # c.drawText(text_object)
+    # c.drawString(4.65*inch, 8.75*inch, "_______________________________________" )
+    # c.drawString(4.65*inch, 8.60*inch, "_______________________________________" )
+    # c.drawString(4.65*inch, 8.4832*inch, "_______________________________________" )
+    # c.drawString(0.5*inch, 7.5*inch, "Requested by: ________________________________" )
+    # c.drawString(1.8*inch, 7.5*inch, "first_name" )
+    # c.drawString(2.19*inch, 7.5*inch, "last_name" )
+    # c.drawString(4*inch, 7.5*inch, "Received by: _________________________________" )
+    # c.drawString(5*inch, 7.5*inch, "staff_fullname" )
 
-    c.drawString(0*inch, 7*inch, "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" )
-    c.setFillColor("black")
-    c.setFont("Times-Bold", 10, leading=None)
-    c.drawString(0.5*inch, 6.7*inch, "ASSESSMENT: " )
-    c.setFillColor("black")
-    c.setFont("Times-Roman", 10, leading=None)
-    c.drawString(1.50*inch, 6.7*inch, "(Assessment of Project)" )
-    c.drawString(0.65*inch, 6.4*inch, "Recommendation:" )
-    c.setFont("Times-Bold", 10, leading=None)
-    c.drawString(2.3*inch, 6.4*inch, "prerepair_inspection" )
+    # c.drawString(0*inch, 7*inch, "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" )
+    # c.setFillColor("black")
+    # c.setFont("Times-Bold", 10, leading=None)
+    # c.drawString(0.5*inch, 6.7*inch, "ASSESSMENT: " )
+    # c.setFillColor("black")
+    # c.setFont("Times-Roman", 10, leading=None)
+    # c.drawString(1.50*inch, 6.7*inch, "(Assessment of Project)" )
+    # c.drawString(0.65*inch, 6.4*inch, "Recommendation:" )
+    # c.setFont("Times-Bold", 10, leading=None)
+    # c.drawString(2.3*inch, 6.4*inch, "prerepair_inspection" )
     # c.drawString(2.3*inch, 6.2*inch, "Out-Source _______________________________________________________________________" )
-    c.setFont("Times-Roman", 10, leading=None)
-    c.drawString(0.5*inch, 5.8*inch, "Assessed by: ________________________________" )
-    c.drawString(1.6*inch, 5.8*inch, "staff_fullname" )
-    c.drawString(4*inch, 5.8*inch, "Noted by: _________________________________" )
-    c.drawString(2.50*inch, 5.4*inch, " Approved by: _________________________________" )
+    # c.setFont("Times-Roman", 10, leading=None)
+    # c.drawString(0.5*inch, 5.8*inch, "Assessed by: ________________________________" )
+    # c.drawString(1.6*inch, 5.8*inch, "staff_fullname" )
+    # c.drawString(4*inch, 5.8*inch, "Noted by: _________________________________" )
+    # c.drawString(2.50*inch, 5.4*inch, " Approved by: _________________________________" )
 
 #Box stroke
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#1
-    c.rect(1.12*inch,8.80*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#2
-    c.rect(1.12*inch,8.60*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#3
-    c.rect(1.12*inch,8.40*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#4
-    c.rect(1.12*inch,8.20*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#5
-    c.rect(1.12*inch,8*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#6
-    c.rect(3*inch,8.80*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#7
-    c.rect(3*inch,8.60*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#8
-    c.rect(3*inch,8.40*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#9
-    c.rect(3*inch,8.20*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(255, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#9
-    c.rect(2.1*inch, 6.4*inch,0.11*inch,0.11*inch,fill=1)
-    c.setStrokeColorRGB(255, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)#9
-    c.rect(2.1*inch, 6.2*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(1.12*inch,8.80*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(1.12*inch,8.60*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(1.12*inch,8.40*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(1.12*inch,8.20*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(1.12*inch,8*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(3*inch,8.80*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(3*inch,8.60*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(3*inch,8.40*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(3*inch,8.20*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(255, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(2.1*inch, 6.4*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(255, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(2.1*inch, 6.2*inch,0.11*inch,0.11*inch,fill=1)
 
     
-    c.setFillColor("black")
-    c.setFont("Times-Bold", 11, leading=None)
-    c.drawString(0*inch, 5.1*inch, "_____________________________________________________________________________________________________________________________________________" )
-    c.drawString(2.45*inch, 4.85*inch, "Medical Center Chief I/Authorized Representative" )
-    c.drawString(0*inch, 4.8*inch, "_____________________________________________________________________________________________________________________________________________" )
+    # c.setFillColor("black")
+    # c.setFont("Times-Bold", 11, leading=None)
+    # c.drawString(0*inch, 5.1*inch, "_____________________________________________________________________________________________________________________________________________" )
+    # c.drawString(2.45*inch, 4.85*inch, "Medical Center Chief I/Authorized Representative" )
+    # c.drawString(0*inch, 4.8*inch, "_____________________________________________________________________________________________________________________________________________" )
 
 
 
 
     
-#table
+# TABLE
+# Header top
     c.setStrokeColorRGB(0, 0, 0)
     c.setLineWidth(1)
     c.setFillColor(white)
-    c.rect(0.9*inch, 4.29*inch, 6.417322*inch, 0.20*inch, fill=1)
-    c.setFillColor(black) 
-    c.drawString(0.95*inch, 4.33*inch, "ACTION TAKEN:")
-    c.setFont("Times-Roman", 10, leading=None)
-    c.drawString(2.3*inch, 4.34*inch, "(Use separate sheet if necessary)" )
+    c.rect(0.9*inch, 5.95*inch, 11.37322*inch, 0.20*inch, fill=1)
 
-    text_object = c.beginText(1.2*inch, 4*inch)
-    text_object.setFont("Times-Roman", 10)
-    text_object.setLeading(12)
-#date
+#row1
+    c.setFillColor(black) 
+    c.drawString(0.95*inch, 6*inch, "Article Item")
     c.setStrokeColorRGB(0, 0, 0)
     c.setLineWidth(1)
     c.setFillColor(white)
-    c.rect(0.9*inch,2*inch,6.417322*inch,2.3*inch,fill=1)
+    c.rect(0.9*inch,3.85*inch,1.12*inch,2.3*inch,fill=0)
+# row2
     c.setFillColor(black) 
-    c.drawText(text_object)
+    c.drawString(2.2*inch, 6*inch, "Description")
+    c.setStrokeColorRGB(0, 0, 0)
+    c.setLineWidth(1)
+    c.setFillColor(white)
+    c.rect(0.9*inch,3.85*inch,3*inch,2.3*inch,fill=0)
+# row3
+    c.setFillColor(black) 
+    c.drawString(4*inch, 6*inch, "Property Number")
+    c.setStrokeColorRGB(0, 0, 0)
+    c.setLineWidth(1)
+    c.setFillColor(white)
+    c.rect(3.9*inch,3.85*inch,1.5*inch,2.3*inch,fill=0)
+# row4
+    c.setFillColor(black) 
+    c.drawString(7.7*inch, 6*inch, "Person Accountable")
+    c.setStrokeColorRGB(0, 0, 0)
+    c.setLineWidth(1)
+    c.setFillColor(white)
+    c.rect(7.6*inch,3.85*inch,1.6*inch,2.3*inch,fill=0)
+# row5
+    c.setFillColor(black) 
+    c.drawString(9.5*inch, 6*inch, "Unit Cost")
+    c.setStrokeColorRGB(0, 0, 0)
+    c.setLineWidth(1)
+    c.setFillColor(white)
+    c.rect(9.2*inch,3.85*inch,1.1*inch,2.3*inch,fill=0)
+# row6
+    c.setFillColor(black) 
+    c.drawString(10.4*inch, 6*inch, "Total Value")
+    c.setStrokeColorRGB(0, 0, 0)
+    c.setLineWidth(1)
+    c.setFillColor(white)
+    c.rect(10.3*inch,3.85*inch,1.1*inch,2.3*inch,fill=0)
+# row7
+    c.setFillColor(black) 
+    c.drawString(11.4*inch, 6*inch, "Remarks")
+    c.setStrokeColorRGB(0, 0, 0)
+    c.setLineWidth(1)
+    c.setFillColor(white)
+    c.rect(11.40*inch,3.85*inch,0.87*inch,2.3*inch,fill=0)
+  
 #time
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)
-    c.rect(1.50*inch,1.86*inch,.75*inch,2.43*inch,fill=1)
-#action taken
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)
-    c.rect(2.25*inch,1.86*inch,2*inch,2.43*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(1.50*inch,1.86*inch,.75*inch,2.43*inch,fill=1)
+# #action taken
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(2.25*inch,1.86*inch,2*inch,2.43*inch,fill=1)
 #action officer
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)
-    c.rect(4.25*inch,1.86*inch,2*inch,2.43*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(4.25*inch,1.86*inch,2*inch,2.43*inch,fill=1)
 #signiture
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)
-    c.rect(6.25*inch,1.86*inch,1.25*inch,2.43*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(6.25*inch,1.86*inch,1.25*inch,2.43*inch,fill=1)
 
 #inspection 
-    c.setFillColor("black")
-    c.setFont("Times-Bold", 11, leading=None)
-    c.drawString(.75*inch,1.60*inch, "INSPECTION: " )
-    c.setFillColor("black")
-    c.setFont("Times-Bold", 10, leading=None)
-    c.drawString(1.80*inch,1.60*inch, "(Inspection of the Project)" )
-    c.drawString(4*inch,1.60*inch, "Date: ____________________________________" )
-    c.drawString(2.3*inch, 1.30*inch, "status" )
-    c.drawString(2.3*inch, 1.10*inch, "Not Completed" )
-    c.setStrokeColorRGB(255, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(blue)
-    c.rect(2.1*inch, 1.30*inch,0.1*inch,0.1*inch,fill=1)
+    # c.setFillColor("black")
+    # c.setFont("Times-Bold", 11, leading=None)
+    # c.drawString(.75*inch,1.60*inch, "INSPECTION: " )
+    # c.setFillColor("black")
+    # c.setFont("Times-Bold", 10, leading=None)
+    # c.drawString(1.80*inch,1.60*inch, "(Inspection of the Project)" )
+    # c.drawString(4*inch,1.60*inch, "Date: ____________________________________" )
+    # c.drawString(2.3*inch, 1.30*inch, "status" )
+    # c.drawString(2.3*inch, 1.10*inch, "Not Completed" )
+    # c.setStrokeColorRGB(255, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(blue)
+    # c.rect(2.1*inch, 1.30*inch,0.1*inch,0.1*inch,fill=1)
 
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(1)
-    c.setFillColor(white)
-    c.rect(2.1*inch, 1.10*inch,0.11*inch,0.11*inch,fill=1)
+    # c.setStrokeColorRGB(0, 0, 0)
+    # c.setLineWidth(1)
+    # c.setFillColor(white)
+    # c.rect(2.1*inch, 1.10*inch,0.11*inch,0.11*inch,fill=1)
     
-    c.setFillColor("black")
-    c.setFont("Times-Roman", 10, leading=None)
-    c.drawString(.50*inch,.8*inch, "Inspected by: ________________________________________        Received by: ______________________________" )
-    c.drawString(2.2*inch, .8*inch, "staff_fullname")
+    # c.setFillColor("black")
+    # c.setFont("Times-Roman", 10, leading=None)
+    # c.drawString(.50*inch,.8*inch, "Inspected by: ________________________________________        Received by: ______________________________" )
+    # c.drawString(2.2*inch, .8*inch, "staff_fullname")
     
 #footer
-    c.setStrokeColorRGB(0, 0, 1, alpha=0.4) # Blue color
-    c.setLineWidth(2)
-    c.line(0*inch,.6*inch,9*inch,.6*inch)
-    c.setFillColor("black")
-    c.setFont("Times-Roman", 10, leading=None)
-    c.drawString(0.25*inch, .4*inch, "BRGHGMC-F-HOPSS-IMIS-013                      Rev .0             Effectivity Date: " )
-    c.drawString(4.7*inch, .4*inch, "Duration" )
+    # c.setStrokeColorRGB(0, 0, 1, alpha=0.4) # Blue color
+    # c.setLineWidth(2)
+    # c.line(0*inch,.6*inch,9*inch,.6*inch)
+    # c.setFillColor("black")
+    # c.setFont("Times-Roman", 10, leading=None)
+    # c.drawString(0.25*inch, .4*inch, "BRGHGMC-F-HOPSS-IMIS-013                      Rev .0             Effectivity Date: " )
+    # c.drawString(4.7*inch, .4*inch, "Duration" )
   
     
     

@@ -13,5 +13,5 @@ urlpatterns = [
 
     path('user_list/', user_list, name="user_list"),
     path('equipment_pdf/<int:pk>/', equipment_pdf, name="equipment_pdf"),
-    path('generate_repair_request_pdf/', generate_repair_request_pdf, name="generate_repair_request_pdf"),
+    path('generate_repair_request_pdf/<uuid:pk>', generate_repair_request_pdf, name="generate_repair_request_pdf"),
 ]
